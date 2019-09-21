@@ -34,7 +34,17 @@ RUN set -ex; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*
 
-COPY php-fpm/7.3/mailhog/mhsendmail /usr/local/bin/mhsendmail
+RUN set -ex; \
+    apt-get update; \
+    apt-get install --no-install-recommends -y \
+        git \
+        python-pip \
+        python-setuptools \
+        python-wheel
+
+RUN pip install shyaml
+
+COPY mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /usr/local/etc/php/conf.d/mailhog.ini
 
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
