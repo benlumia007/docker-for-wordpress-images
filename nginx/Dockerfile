@@ -5,12 +5,5 @@ LABEL maintainer="Benjamin Lu ( ben@getbenonit.com )"
 RUN apt-get update \
  && apt-get install -y -q --no-install-recommends \
     ca-certificates \
-    git \
-    wget \
-    python-pip \
-    python-setuptools \
-    python-wheel \
  && apt-get clean \
  && rm -r /var/lib/apt/lists/*
-
- RUN pip install shyaml
