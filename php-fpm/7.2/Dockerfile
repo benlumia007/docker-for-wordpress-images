@@ -1,4 +1,5 @@
 FROM php:7.2-fpm
+LABEL maintainer="Benjamin Lu ( ben@getbenonit.com )"
 
 # install the PHP extenstion we need ( https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions )
 RUN set -ex; \
