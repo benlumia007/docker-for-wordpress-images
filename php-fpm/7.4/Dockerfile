@@ -1,4 +1,4 @@
-FROM php:7.4-rc-fpm
+FROM php:7.4-fpm
 LABEL maintainer="Benjamin Lu ( ben@getbenonit.com )"
 
 # install the PHP extenstion we need ( https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions )
@@ -35,7 +35,7 @@ RUN set -ex; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*
 
-COPY php-fpm/7.3/mailhog/mhsendmail /usr/local/bin/mhsendmail
+COPY php-fpm/7.4/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /usr/local/etc/php/conf.d/mailhog.ini
 
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
