@@ -13,6 +13,3 @@ RUN apt-get update \
  && rm -r /var/lib/apt/lists/*
 
 RUN pip install shyaml
-
-COPY nginx/app /app/
-WORKDIR /app
