@@ -49,9 +49,6 @@ RUN { \
     echo 'upload_max_filesize=100M'; \
 } > /usr/local/etc/php/conf.d/php-custom.ini
 
-RUN mkdir -p /var/log/php
-RUN touch /var/log/php/php_errors.log
-
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 RUN chmod +x /usr/local/bin/wp
 
