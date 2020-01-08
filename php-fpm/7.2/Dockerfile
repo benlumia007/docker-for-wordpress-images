@@ -42,7 +42,7 @@ RUN { \
     echo 'error_reporting=E_ALL'; \
     echo 'display_startup_errors=On'; \
     echo 'log_errors=On'; \
-    echo 'error_log=/var/log/php/php_errors.log'; \
+    echo 'error_log = /dev/stderr'; \
     echo 'log_errors_max_len=0'; \
     echo 'memory_limit=256M'; \
     echo 'post_max_size=100M'; \
