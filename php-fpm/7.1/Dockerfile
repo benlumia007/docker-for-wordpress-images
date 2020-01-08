@@ -41,6 +41,7 @@ RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > 
 RUN { \
     echo 'error_reporting=E_ALL'; \
     echo 'display_startup_errors=On'; \
+    echo 'log_errors=On'; \
     echo 'error_log=/var/log/php/php_errors.log'; \
     echo 'log_errors_max_len=0'; \
     echo 'memory_limit=256M'; \
