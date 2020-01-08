@@ -38,6 +38,16 @@ RUN set -ex; \
 COPY php-fpm/7.2/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /usr/local/etc/php/conf.d/mailhog.ini
 
+RUN { \
+    echo 'error_reporting=E_ALL'; \
+    echo 'display_startup_errors=On'; \
+    echo 'error_log=/var/log/php/php_errors.log'; \
+    echo 'log_errors_max_len=0'; \
+    echo 'memory_limit=256M'; \
+    echo 'post_max_size=100M'; \
+    echo 'upload_max_filesize=100M'; \
+} > /usr/local/etc/php/conf.d/php-custom.ini
+
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 RUN chmod +x /usr/local/bin/wp
 
