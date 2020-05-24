@@ -73,4 +73,7 @@ RUN phpenmod php7.4-custom
 # Here, we enable mailhog for php.
 RUN phpenmod mailhog
 
+# Here, we are disabling xdebug by default
+RUN phpdismod xdebug
+
 CMD service php7.4-fpm start && nginx -g "daemon off;"
