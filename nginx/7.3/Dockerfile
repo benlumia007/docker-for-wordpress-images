@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y
 
 # Here, we are going to add some basic requirements
-RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common -y
+RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common less -y
 
 # Here, we are going to add repository to support different versions of PHP.
 # Please note that php7.3 will be installed by default and please avoid installing
