@@ -76,4 +76,7 @@ RUN phpenmod mailhog
 # Here, we are disabling xdebug by default
 RUN phpdismod xdebug
 
+RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+RUN chmod +x /usr/local/bin/wp
+
 CMD service php7.3-fpm start && nginx -g "daemon off;"
