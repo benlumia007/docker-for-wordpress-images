@@ -17,6 +17,9 @@ RUN add-apt-repository ppa:ondrej/php -y
 # Here, we are going to install Web Server ( NGINX )
 RUN apt-get install --no-install-recommends nginx -y
 
+# Here, we will need to install mysql-client only
+RUN apt-get install --no-install-recommends mysql-client -y
+
 # Here, we are going to install basic php requirements
 RUN apt-get install --no-install-recommends \
     php-imagick \

@@ -17,6 +17,9 @@ RUN add-apt-repository ppa:ondrej/php -y
 # Here, we are going to install Web Server ( NGINX )
 RUN apt-get install --no-install-recommends nginx -y
 
+# Here, we will need to install mysql-client only
+RUN apt-get install --no-install-recommends mysql-client -y
+
 # Here, we are going to install basic php requirements
 RUN apt-get install --no-install-recommends \
     php-imagick \
@@ -44,6 +47,7 @@ RUN apt-get install --no-install-recommends \
     php7.2-sqlite3 \
     php7.2-xml \
     php7.2-zip \
+    php7.4-mysql \
     -y
 
 # Here, we will be adding a custom file to enable features for php-custom.ini
@@ -76,7 +80,6 @@ RUN phpenmod mailhog
 # Here, we are disabling xdebug by default
 RUN phpdismod xdebug
 
-RUN apt-get install php7.4-mysql -y
 RUN phpenmod mysqli
 RUN phpenmod mysqlnd 
 
