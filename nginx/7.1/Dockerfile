@@ -76,7 +76,13 @@ RUN phpenmod mailhog
 # Here, we are disabling xdebug by default
 RUN phpdismod xdebug
 
+RUN apt-get install php7.4-mysql -y
+RUN phpenmod mysqli
+RUN phpenmod mysqlnd 
+
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 RUN chmod +x /usr/local/bin/wp
+
+RUN usermod -u 1000 www-data
 
 CMD service php7.1-fpm start && nginx -g "daemon off;"
