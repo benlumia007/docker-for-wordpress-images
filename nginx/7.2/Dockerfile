@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y
 
 # Here, we are going to add some basic requirements
-RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common sudo less -y
+RUN apt-get install --no-install-recommends --fix-missing --fix-broken build-essential curl dkms software-properties-common sudo less -y
 
 # Here, we are going to add repository to support different versions of PHP.
 # Please note that php7.2 will be installed by default and please avoid installing
@@ -15,13 +15,13 @@ RUN apt-get install --no-install-recommends build-essential curl dkms software-p
 RUN add-apt-repository ppa:ondrej/php -y
 
 # Here, we are going to install Web Server ( NGINX )
-RUN apt-get install --no-install-recommends nginx -y
+RUN apt-get install --no-install-recommends --fix-missing --fix-broken nginx -y
 
 # Here, we will need to install mysql-client only
-RUN apt-get install --no-install-recommends mysql-client -y
+RUN apt-get install --no-install-recommends --fix-missing --fix-broken mysql-client -y
 
 # Here, we are going to install basic php requirements
-RUN apt-get install --no-install-recommends \
+RUN apt-get install --no-install-recommends --fix-missing --fix-broken  \
     php-imagick \
     php-memcache \
     php-memcached \
@@ -31,7 +31,7 @@ RUN apt-get install --no-install-recommends \
     -y
 
 # Here, we will install all of the necessary components for php7.2.
-RUN apt-get install --no-install-recommends \
+RUN apt-get install --no-install-recommends --fix-missing --fix-broken  \
     php7.2-bcmath \
     php7.2-cli \
     php7.2-common \
