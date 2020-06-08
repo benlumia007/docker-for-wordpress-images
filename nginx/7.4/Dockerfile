@@ -83,10 +83,10 @@ RUN phpenmod mysqli
 RUN phpenmod mysqlnd 
 
 # Here we are going to change user and group for php7.2-fpm to docker.
-RUN sed -i -e "s/www-data/docker/g" "/etc/php/7.2/fpm/pool.d/www.conf"
+COPY config/php/www.conf /etc/php/7.2/fpm/pool.d/www.conf
 
 # Here we are going to change the nginx.conf user to docker.
-RUN sed -i -e "s/www-data/docker/g" "/etc/nginx/nginx.conf"
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Let's create a user docker and create it's home directory and give docker full access with
 # no passowrd and switch to docker as user.
