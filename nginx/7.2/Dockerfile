@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y
 
 # Here, we are going to add some basic requirements
-RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common less -y
+RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common sudo less -y
 
 # Here, we are going to add repository to support different versions of PHP.
 # Please note that php7.2 will be installed by default and please avoid installing
@@ -83,9 +83,24 @@ RUN phpdismod xdebug
 RUN phpenmod mysqli
 RUN phpenmod mysqlnd 
 
-RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-RUN chmod +x /usr/local/bin/wp
+# Here we are going to change user and group for php7.2-fpm to docker
+RUN sed -i -e "s/www-data/docker/g" "/etc/php/7.2/fpm/pool.d/www.conf"
 
-RUN usermod -u 1000 www-data
+# Here we are going to change the nginx.conf user to docker.
+RUN sed -i -e "s/www-data/docker/g" "/etc/nginx/nginx.conf"
 
-CMD service php7.2-fpm start && nginx -g "daemon off;"
+# Let's create a user docker and create it's home directory and give docker full access with
+# no passowrd and switch to docker as user.
+RUN useradd docker --create-home
+RUN echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker
+RUN chmod 440 /etc/sudoers.d/docker
+RUN usermod -aG www-data docker
+USER docker
+
+
+# Here, we are going to install wp cli as docker user
+RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+RUN sudo chmod +x /usr/local/bin/wp
+RUN sudo chown -R docker:docker /usr/local/bin/wp
+
+CMD sudo service php7.2-fpm start && sudo nginx -g "daemon off;"
