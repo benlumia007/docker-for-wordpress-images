@@ -4,21 +4,20 @@ FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 ## Here we are going to run and update and upgrade packages.
-RUN apt-get update && apt-get upgrade -y
+RUN apt-get update -y
 
 # Here, we are going to add some basic requirements
-RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common sudo less -y
+RUN apt-get install --no-install-recommends build-essential curl dkms less python-pip python-setuptools python-wheel software-properties-common sudo unzip wget  -y
 
-# Here, we are going to add repository to support different versions of PHP.
-# Please note that php7.2 will be installed by default and please avoid installing
-# other versions since there will be different containers to support other php versions.
-RUN add-apt-repository ppa:ondrej/php -y
+RUN add-apt-repository ppa:git-core/ppa -y
+
+RUN apt-get update && apt-get install git -y
 
 # Here, we are going to install Web Server ( NGINX )
 RUN apt-get install --no-install-recommends nginx -y
 
 # Here, we will need to install mysql-client only
-RUN apt-get install --no-install-recommends mysql-client -y
+RUN apt-get install --no-install-recommends mysql-server mysql-client -y
 
 # Here, we are going to install basic php requirements
 RUN apt-get install --no-install-recommends \
@@ -47,7 +46,6 @@ RUN apt-get install --no-install-recommends \
     php7.2-sqlite3 \
     php7.2-xml \
     php7.2-zip \
-    php7.4-mysql \
     -y
 
 # Here, we will be adding a custom file to enable features for php-custom.ini
@@ -62,11 +60,6 @@ RUN { \
     echo 'post_max_size=100M'; \
     echo 'upload_max_filesize=100M'; \
 } > /etc/php/7.2/mods-available/php7.2-custom.ini
-
-# Here, we have php_error.logs own by www-data for write access.
-RUN mkdir -p /var/log/php 
-RUN touch /var/log/php/php_errors.log
-RUN chown www-data /var/log/php/php_errors.log
 
 COPY config/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.2/mods-available/mailhog.ini
@@ -83,6 +76,8 @@ RUN phpdismod xdebug
 RUN phpenmod mysqli
 RUN phpenmod mysqlnd 
 
+RUN pip install shyaml
+
 # Here we are going to change user and group for php7.2-fpm to docker.
 COPY config/php/www.conf /etc/php/7.2/fpm/pool.d/www.conf
 
@@ -92,9 +87,13 @@ COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 # Let's create a user docker and create it's home directory and give docker full access with
 # no passowrd and switch to docker as user.
 RUN useradd docker --create-home
+
 RUN echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker
+
 RUN chmod 440 /etc/sudoers.d/docker
-RUN usermod -aG www-data docker
+
+COPY config/mysql/.my.cnf /home/docker/.my.cnf
+
 USER docker
 
 
@@ -103,4 +102,6 @@ RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.co
 RUN sudo chmod +x /usr/local/bin/wp
 RUN sudo chown -R docker:docker /usr/local/bin/wp
 
-CMD sudo service php7.2-fpm start && sudo nginx -g "daemon off;"
+WORKDIR /app
+
+CMD sudo service mysql start && sudo service php7.2-fpm start && sudo nginx -g "daemon off;"
