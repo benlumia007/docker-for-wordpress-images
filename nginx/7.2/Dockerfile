@@ -7,17 +7,34 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y
 
 # Here, we are going to add some basic requirements
-RUN apt-get install --no-install-recommends build-essential curl dkms less python-pip python-setuptools python-wheel software-properties-common sudo unzip wget  -y
+RUN apt-get install --no-install-recommends \
+    build-essential \
+    curl \
+    dkms \
+    less \
+    python-pip \
+    python-setuptools \
+    python-wheel \
+    software-properties-common \
+    sudo \
+    unzip \
+    wget \
+    -y
 
+# Add a ppa repository  for git so that we can the latest version
 RUN add-apt-repository ppa:git-core/ppa -y
 
-RUN apt-get update && apt-get install git -y
+# update and install git
+RUN apt-get update && \
+    apt-get install git \
+    -y
 
 # Here, we are going to install Web Server ( NGINX )
-RUN apt-get install --no-install-recommends nginx -y
-
-# Here, we will need to install mysql-client only
-RUN apt-get install --no-install-recommends mysql-server mysql-client -y
+RUN apt-get install --no-install-recommends \
+    mysql-server \
+    mysql-client \
+    nginx \
+    -y
 
 # Here, we are going to install basic php requirements
 RUN apt-get install --no-install-recommends \
@@ -27,10 +44,6 @@ RUN apt-get install --no-install-recommends \
     php-pear \
     php-ssh2 \
     php-xdebug \
-    -y
-
-# Here, we will install all of the necessary components for php7.2.
-RUN apt-get install --no-install-recommends \
     php7.2-bcmath \
     php7.2-cli \
     php7.2-common \
@@ -61,20 +74,27 @@ RUN { \
     echo 'upload_max_filesize=100M'; \
 } > /etc/php/7.2/mods-available/php7.2-custom.ini
 
+# Here, we are going to enable opcache
+RUN { \
+		echo 'opcache.memory_consumption=128'; \
+		echo 'opcache.interned_strings_buffer=8'; \
+		echo 'opcache.max_accelerated_files=4000'; \
+		echo 'opcache.revalidate_freq=2'; \
+		echo 'opcache.fast_shutdown=1'; \
+} > /etc/php/7.2/mods-available/php7.2-opcache.ini
+
 COPY config/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.2/mods-available/mailhog.ini
 
 # Here, we will be enable php-custom.ini using phpenmod
-RUN phpenmod php7.2-custom
+RUN phpenmod php7.2-custom && \
+    phpenmod php7.2-opcache
 
 # Here, we enable mailhog for php.
-RUN phpenmod mailhog
-
-# Here, we are disabling xdebug by default
-RUN phpdismod xdebug
-
-RUN phpenmod mysqli
-RUN phpenmod mysqlnd 
+RUN phpenmod mailhog && \
+    phpenmod mysqli && \
+    phpenmod mysqlnd && \
+    phpdismod xdebug
 
 RUN pip install shyaml
 
@@ -86,21 +106,22 @@ COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Let's create a user docker and create it's home directory and give docker full access with
 # no passowrd and switch to docker as user.
-RUN useradd docker --create-home
-
-RUN echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker
-
-RUN chmod 440 /etc/sudoers.d/docker
+RUN useradd docker --create-home && \
+    echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker && \
+    chmod 440 /etc/sudoers.d/docker
 
 COPY config/mysql/.my.cnf /home/docker/.my.cnf
 
+RUN /etc/init.d/mysql start && \ 
+    mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'root';" && \
+    mysql -uroot -proot -e "FLUSH PRIVILEGES;"
+
 USER docker
 
-
 # Here, we are going to install wp cli as docker user
-RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-RUN sudo chmod +x /usr/local/bin/wp
-RUN sudo chown -R docker:docker /usr/local/bin/wp
+RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    sudo chmod +x /usr/local/bin/wp && \
+    sudo chown -R docker:docker /usr/local/bin/wp
 
 WORKDIR /app
 
