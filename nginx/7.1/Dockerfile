@@ -4,10 +4,30 @@ FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 ## Here we are going to run and update and upgrade packages.
-RUN apt-get update && apt-get upgrade -y
+RUN apt-get update -y
 
 # Here, we are going to add some basic requirements
-RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common sudo less -y
+RUN apt-get install --no-install-recommends \
+    build-essential \
+    curl \
+    dkms \
+    less \
+    python-pip \
+    python-setuptools \
+    python-wheel \
+    software-properties-common \
+    sudo \
+    unzip \
+    wget \
+    -y
+
+# Add a ppa repository  for git so that we can the latest version
+RUN add-apt-repository ppa:git-core/ppa -y
+
+# update and install git
+RUN apt-get update && \
+    apt-get install git \
+    -y
 
 # Here, we are going to add repository to support different versions of PHP.
 # Please note that php7.1 will be installed by default and please avoid installing
@@ -15,10 +35,11 @@ RUN apt-get install --no-install-recommends build-essential curl dkms software-p
 RUN add-apt-repository ppa:ondrej/php -y
 
 # Here, we are going to install Web Server ( NGINX )
-RUN apt-get install --no-install-recommends nginx -y
-
-# Here, we will need to install mysql-client only
-RUN apt-get install --no-install-recommends mysql-client -y
+RUN apt-get install --no-install-recommends \
+    mysql-server \
+    mysql-client \
+    nginx \
+    -y
 
 # Here, we are going to install basic php requirements
 RUN apt-get install --no-install-recommends \
@@ -28,10 +49,6 @@ RUN apt-get install --no-install-recommends \
     php-pear \
     php-ssh2 \
     php-xdebug \
-    -y
-
-# Here, we will install all of the necessary components for php7.1.
-RUN apt-get install --no-install-recommends \
     php7.1-bcmath \
     php7.1-cli \
     php7.1-common \
@@ -47,7 +64,6 @@ RUN apt-get install --no-install-recommends \
     php7.1-sqlite3 \
     php7.1-xml \
     php7.1-zip \
-    php7.4-mysql \
     -y
 
 # Here, we will be adding a custom file to enable features for php-custom.ini
@@ -63,44 +79,55 @@ RUN { \
     echo 'upload_max_filesize=100M'; \
 } > /etc/php/7.1/mods-available/php7.1-custom.ini
 
-# Here, we have php_error.logs own by www-data for write access.
-RUN mkdir -p /var/log/php 
-RUN touch /var/log/php/php_errors.log
-RUN chown www-data /var/log/php/php_errors.log
+# Here, we are going to enable opcache
+RUN { \
+		echo 'opcache.memory_consumption=128'; \
+		echo 'opcache.interned_strings_buffer=8'; \
+		echo 'opcache.max_accelerated_files=4000'; \
+		echo 'opcache.revalidate_freq=2'; \
+		echo 'opcache.fast_shutdown=1'; \
+} > /etc/php/7.1/mods-available/php7.1-opcache.ini
 
 COPY config/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.1/mods-available/mailhog.ini
 
 # Here, we will be enable php-custom.ini using phpenmod
-RUN phpenmod php7.1-custom
+RUN phpenmod php7.1-custom && \
+    phpenmod php7.1-opcache
 
 # Here, we enable mailhog for php.
-RUN phpenmod mailhog
+RUN phpenmod mailhog && \
+    phpenmod mysqli && \
+    phpenmod mysqlnd && \
+    phpdismod xdebug
 
-# Here, we are disabling xdebug by default
-RUN phpdismod xdebug
+RUN pip install shyaml
 
-RUN phpenmod mysqli
-RUN phpenmod mysqlnd 
-
-# Here we are going to change user and group for php7.2-fpm to docker.
-COPY config/php/www.conf /etc/php/7.2/fpm/pool.d/www.conf
+# Here we are going to change user and group for php7.1-fpm to docker.
+COPY config/php/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 
 # Here we are going to change the nginx.conf user to docker.
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Let's create a user docker and create it's home directory and give docker full access with
 # no passowrd and switch to docker as user.
-RUN useradd docker --create-home
-RUN echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker
-RUN chmod 440 /etc/sudoers.d/docker
-RUN usermod -aG www-data docker
+RUN useradd docker --create-home && \
+    echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker && \
+    chmod 440 /etc/sudoers.d/docker
+
+COPY config/mysql/.my.cnf /home/docker/.my.cnf
+
+RUN /etc/init.d/mysql start && \ 
+    mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'root';" && \
+    mysql -uroot -proot -e "FLUSH PRIVILEGES;"
+
 USER docker
 
-
 # Here, we are going to install wp cli as docker user
-RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-RUN sudo chmod +x /usr/local/bin/wp
-RUN sudo chown -R docker:docker /usr/local/bin/wp
+RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    sudo chmod +x /usr/local/bin/wp && \
+    sudo chown -R docker:docker /usr/local/bin/wp
 
-CMD sudo service php7.1-fpm start && sudo nginx -g "daemon off;"
+WORKDIR /app
+
+CMD sudo service mysql start && sudo service php7.1-fpm start && sudo nginx -g "daemon off;"
