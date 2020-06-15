@@ -123,6 +123,8 @@ RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.co
     sudo chmod +x /usr/local/bin/wp && \
     sudo chown -R docker:docker /usr/local/bin/wp
 
+COPY /app /app
+RUN sudo chown -R docker:docker /app
 WORKDIR /app
 
 CMD sudo service mysql start && sudo service php7.2-fpm start && sudo nginx -g "daemon off;"
