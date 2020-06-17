@@ -36,7 +36,6 @@ RUN add-apt-repository ppa:ondrej/php -y
 
 # Here, we are going to install Web Server ( NGINX )
 RUN apt-get install --no-install-recommends \
-    mysql-server \
     mysql-client \
     nginx \
     -y
@@ -114,12 +113,6 @@ COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 RUN useradd docker --create-home && \
     echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker && \
     chmod 440 /etc/sudoers.d/docker
-
-COPY config/mysql/.my.cnf /home/docker/.my.cnf
-
-RUN /etc/init.d/mysql start && \ 
-    mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'root';" && \
-    mysql -uroot -proot -e "FLUSH PRIVILEGES;"
 
 USER docker
 
