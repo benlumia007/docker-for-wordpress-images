@@ -17,3 +17,6 @@ RUN apt-get update -y && \
 RUN pip install shyaml
 
 COPY mysql/5.7/scripts/.my.cnf /root/.my.cnf
+COPY mysql/5.7/scripts/app /app
+
+WORKDIR /app
