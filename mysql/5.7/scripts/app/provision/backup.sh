@@ -13,6 +13,6 @@ if [[ ${db_backups} != "False" ]]; then
     grep -v -F "sys" | \
     while read dbname;
     do
-      mysqldump -uroot -proot "${dbname}" > "/srv/database/backups/${dbname}.sql";
+      mysqldump -u root -e "${dbname}" > "/srv/databases/${dbname}.sql";
     done
 fi
