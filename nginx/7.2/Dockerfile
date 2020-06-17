@@ -31,7 +31,6 @@ RUN apt-get update && \
 
 # Here, we are going to install Web Server ( NGINX )
 RUN apt-get install --no-install-recommends \
-    mysql-server \
     mysql-client \
     nginx \
     -y
@@ -110,12 +109,6 @@ RUN useradd docker --create-home && \
     echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker && \
     chmod 440 /etc/sudoers.d/docker
 
-COPY config/mysql/.my.cnf /home/docker/.my.cnf
-
-RUN /etc/init.d/mysql start && \ 
-    mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'root';" && \
-    mysql -uroot -proot -e "FLUSH PRIVILEGES;"
-
 USER docker
 
 # Here, we are going to install wp cli as docker user
@@ -127,4 +120,4 @@ COPY /app /app
 RUN sudo chown -R docker:docker /app
 WORKDIR /app
 
-CMD sudo service mysql start && sudo service php7.2-fpm start && sudo nginx -g "daemon off;"
+CMD sudo service php7.2-fpm start && sudo nginx -g "daemon off;"
