@@ -123,4 +123,4 @@ RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.co
 
 WORKDIR /app
 
-CMD sudo service mysql start && sudo service php7.4-fpm start && sudo nginx -g "daemon off;"
+CMD sudo service php7.4-fpm start && sudo nginx -g "daemon off;"
