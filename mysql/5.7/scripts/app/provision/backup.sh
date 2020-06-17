@@ -1,5 +1,3 @@
-  GNU nano 3.2                                                                                           provision/backup.sh                                                                                                     
-
 #!/bin/bash
 config="/srv/.global/custom.yml"
 
