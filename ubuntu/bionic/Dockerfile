@@ -1,5 +1,8 @@
 FROM ubuntu:18.04
 
+## Here, we are going to set the frontend to no interactive.
+ENV DEBIAN_FRONTEND=noninteractive
+
 ## Here we are going to run and update and upgrade packages.
 RUN apt-get update -y
 
