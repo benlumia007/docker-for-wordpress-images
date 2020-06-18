@@ -7,7 +7,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y
 
 # Here, we are going to add some basic requirements
-RUN apt-get install --no-install-recommends sudo -y
+RUN apt-get install --no-install-recommends \
+    build-essential \
+    curl \
+    dkms \
+    software-properties-common \
+    sudo \
+    unzip \
+    wget \
+    -y
 
 # Let's create a user docker and create it's home directory and give docker full access with
 # no passowrd and switch to docker as user.
