@@ -82,7 +82,7 @@ RUN { \
 		echo 'opcache.fast_shutdown=1'; \
 } > /etc/php/7.2/mods-available/php7.2-opcache.ini
 
-COPY config/mailhog/mhsendmail /usr/local/bin/mhsendmail
+COPY nginx/config/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.2/mods-available/mailhog.ini
 
 # Here, we will be enable php-custom.ini using phpenmod
@@ -98,10 +98,10 @@ RUN phpenmod mailhog && \
 RUN pip install shyaml
 
 # Here we are going to change user and group for php7.2-fpm to docker.
-COPY config/php/www.conf /etc/php/7.2/fpm/pool.d/www.conf
+COPY nginx/config/php/www.conf /etc/php/7.2/fpm/pool.d/www.conf
 
 # Here we are going to change the nginx.conf user to docker.
-COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Let's create a user docker and create it's home directory and give docker full access with
 # no passowrd and switch to docker as user.
