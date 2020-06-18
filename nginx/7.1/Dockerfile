@@ -87,7 +87,7 @@ RUN { \
 		echo 'opcache.fast_shutdown=1'; \
 } > /etc/php/7.1/mods-available/php7.1-opcache.ini
 
-COPY config/mailhog/mhsendmail /usr/local/bin/mhsendmail
+COPY nginx/config/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.1/mods-available/mailhog.ini
 
 # Here, we will be enable php-custom.ini using phpenmod
@@ -103,10 +103,10 @@ RUN phpenmod mailhog && \
 RUN pip install shyaml
 
 # Here we are going to change user and group for php7.1-fpm to docker.
-COPY config/php/www.conf /etc/php/7.1/fpm/pool.d/www.conf
+COPY nginx/config/php/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 
 # Here we are going to change the nginx.conf user to docker.
-COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Let's create a user docker and create it's home directory and give docker full access with
 # no passowrd and switch to docker as user.
@@ -121,7 +121,7 @@ RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.co
     sudo chmod +x /usr/local/bin/wp && \
     sudo chown -R docker:docker /usr/local/bin/wp
 
-COPY /app /app
+COPY nginx/app /app
 RUN sudo chown -R docker:docker /app
 WORKDIR /app
 
