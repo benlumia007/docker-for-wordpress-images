@@ -2,6 +2,15 @@
 
 config="/srv/.global/custom.yml"
 
+# noroot
+#
+# noroot allows provision scripts to be run as the default user "www-data" rather than the root
+# since provision scripts are run with root privileges.
+noroot() {
+    sudo -EH -u "www-data" "$@";
+}
+
+
 get_sites() {
     local value=`cat ${config} | shyaml keys sites 2> /dev/null`
     echo ${value:-$@}
@@ -10,8 +19,8 @@ get_sites() {
 for domain in `get_sites`; do
 
     if [[ ! -d "/etc/nginx/conf.d/${domain}.conf" ]]; then
-      sudo cp "/app/config/templates/nginx.conf" "/etc/nginx/conf.d/${domain}.conf"
-      sudo sed -i -e "s/{{DOMAIN}}/${domain}/g" "/etc/nginx/conf.d/${domain}.conf"
+      cp "/app/config/templates/nginx.conf" "/etc/nginx/conf.d/${domain}.conf"
+      sed -i -e "s/{{DOMAIN}}/${domain}/g" "/etc/nginx/conf.d/${domain}.conf"
     fi
 
 
@@ -31,16 +40,16 @@ for domain in `get_sites`; do
     if [[ "True" == ${provision} ]]; then
         dir="/srv/www/${domain}"
         if [[ ! -d "${dir}/provision/.git" ]]; then
-            git clone ${repo} ${dir}/provision -q
+            noroot git clone ${repo} ${dir}/provision -q
         else
             cd ${dir}/provision
-            git pull -q
+            noroot git pull -q
             cd /app
         fi
 
         if [[ -d ${dir} ]]; then
             if [[ -f ${dir}/provision/setup.sh ]]; then
-                source ${dir}/provision/setup.sh
+               source ${dir}/provision/setup.sh
             fi
         fi
     fi

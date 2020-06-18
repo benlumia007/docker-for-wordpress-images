@@ -2,6 +2,14 @@
 
 config="/srv/.global/custom.yml"
 
+# noroot
+#
+# noroot allows provision scripts to be run as the default user "www-data" rather than the root
+# since provision scripts are run with root privileges.
+noroot() {
+    sudo -EH -u "www-data" "$@";
+}
+
 get_resources() {
     local value=`cat ${config} | shyaml get-value resources`
     echo ${value:$@}
@@ -18,7 +26,7 @@ for name in ${resources//- /$'\n'}; do
             git clone ${repo} ${dir} -q
         else
             cd ${dir}
-            git pull origin master -q
+            git pull  -q
             cd /app
         fi
     fi

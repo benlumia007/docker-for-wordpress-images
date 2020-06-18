@@ -3,17 +3,25 @@
 repo="https://github.com/benlumia007/wp-4-docker-dashboard.git"
 dir="/srv/www/dashboard/public_html"
 
+# noroot
+#
+# noroot allows provision scripts to be run as the default user "vagrant" rather than the root
+# since provision scripts are run with root privileges.
+noroot() {
+    sudo -EH -u "www-data" "$@";
+}
+
 if [[ ! -d "/etc/nginx/conf.d/dashboard.conf" ]]; then
-  sudo cp "/app/config/templates/nginx.conf" "/etc/nginx/conf.d/dashboard.conf"
-  sudo sed -i -e "s/{{DOMAIN}}/dashboard/g" "/etc/nginx/conf.d/dashboard.conf"
+  cp "/app/config/templates/nginx.conf" "/etc/nginx/conf.d/dashboard.conf"
+  sed -i -e "s/{{DOMAIN}}/dashboard/g" "/etc/nginx/conf.d/dashboard.conf"
 fi
 
 if [[ false != "${repo}" ]]; then
     if [[ ! -d ${dir}/.git ]]; then
-        git clone ${repo} ${dir} -q
+        noroot git clone ${repo} ${dir} -q
     else
         cd ${dir}
-        git pull -q
+        noroot git pull -q
         cd /app
     fi
 fi
