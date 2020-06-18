@@ -10,6 +10,7 @@ RUN apt-get install --no-install-recommends \
     dkms \
     less \
     software-properties-common \
+    sudo \
     unzip \
     wget \
     -y
