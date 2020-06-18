@@ -1,41 +1,44 @@
-FROM ubuntu:18.04
+FROM benlumia007/ubuntu:18.04
 LABEL maintainer="Benjamin Lu ( ben@getbenonit.com )"
 
 # The main objective of this project is to create a working environment for WordPress development that
-# does not use root as default and create a non user to do all it's job when the container is running.
-# But first, we will need to install the basic requirements when usng root.+
+# uses root as default and allow the www-data to do all it's job when the container is running as much
+# as possible. But first, we will need to install the basic requirements when usng root.
 
 # Let's set an environment variable for DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Add a ppa repository  for git so that we can the latest version.
+RUN add-apt-repository ppa:git-core/ppa -y
+
 # Here, we will then do an apt-get update and upgrade some packages before we start the process of 
 # insalling actuall packages. This will help to install software that we need.
-RUN apt-get update && apt-get upgrade -y
+RUN apt-get update -y
 
-# Here, we are going to add some basic requirements that allows us to run. We will need to install sudo
-# and less because we want to make sure not user can the one that gets used as the main user instead of
-# the root. 
-RUN apt-get install --no-install-recommends build-essential curl dkms software-properties-common sudo less -y
+# Here, we are going to add some basic requirements that allows us to run. We will need to install
+# some of the python packages that we can install shyaml which allow us to read yaml files when running
+# our main automation scripts.
+RUN apt-get install --no-install-recommends \
+    git \
+    python-pip \
+    python-setuptools \
+    python-wheel \
+    -y
 
 # Here, we are going to install the Apache2 Web Server because it seems to be a logic server to use from
 # my own experience and it is a lot easier to configured. We will need to set the apache user and group
 # to another user due to permissions issue.
-RUN apt-get install --no-install-recommends apache2 -y
-
-RUN apt-get install --no-install-recommends mysql-client -y
-
-# Here, we are going to install basic php requirements
+# Here, we are going to install Web Server ( NGINX )
 RUN apt-get install --no-install-recommends \
+    apache2 \
+    libapache2-mod-php7.2 \
+    mysql-client \
     php-imagick \
     php-memcache \
     php-memcached \
     php-pear \
     php-ssh2 \
     php-xdebug \
-    -y
-
-# Here, we will install all of the necessary components for php7.2.
-RUN apt-get install --no-install-recommends \
     php7.2-bcmath \
     php7.2-cli \
     php7.2-common \
@@ -49,8 +52,10 @@ RUN apt-get install --no-install-recommends \
     php7.2-soap \
     php7.2-xml \
     php7.2-zip \
-    libapache2-mod-php7.2 \
     -y
+
+# Here, we are going to install shyaml
+RUN pip install shyaml
 
 # Here, we will be adding a custom file to enable features for php-custom.ini
 RUN { \
@@ -63,34 +68,40 @@ RUN { \
     echo 'memory_limit=256M'; \
     echo 'post_max_size=100M'; \
     echo 'upload_max_filesize=100M'; \
-} > /etc/php/7.2/mods-available/php7.2-custom.ini
+} > /etc/php/7.2/mods-available/php-custom.ini
 
-COPY config/mailhog/mhsendmail /usr/local/bin/mhsendmail
+# Here, we are going to enable opcache
+RUN { \
+		echo 'opcache.memory_consumption=128'; \
+		echo 'opcache.interned_strings_buffer=8'; \
+		echo 'opcache.max_accelerated_files=4000'; \
+		echo 'opcache.revalidate_freq=2'; \
+		echo 'opcache.fast_shutdown=1'; \
+} > /etc/php/7.2/mods-available/php-opcache.ini
+
+COPY apache2/config/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.2/mods-available/mailhog.ini
-RUN chmod +x /usr/local/bin/mhsendmail
 
-COPY config/apache2/envvars /etc/apache2/envvars
-
-RUN phpenmod php7.2-custom
-RUN phpenmod mailhog
+# Here, we will be enable php-custom.ini using phpenmod
+RUN phpenmod php-custom && \
+    phpenmod php-opcache && \
+    phpenmod mailhog && \
+    phpenmod mysqli && \
+    phpenmod mysqlnd && \
+    phpdismod xdebug
 
 # Let's enable some modules for PHP
 RUN a2enmod ssl rewrite
 
-# Let's create a user docker and create it's home directory and give docker full access with
-# no passowrd and switch to docker as user.
-RUN useradd docker --create-home
-RUN echo 'docker ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker
-RUN chmod 440 /etc/sudoers.d/docker
-USER docker
-
 # Here, we are going to install wp cli as docker user
-RUN sudo  curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-RUN sudo chmod +x /usr/local/bin/wp
-RUN sudo chown -R docker:docker /usr/local/bin/wp
+RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x /usr/local/bin/wp
 
-# Our working directory
-WORKDIR /home/docker
+COPY apache2/app /app
+WORKDIR /app
+
+RUN usermod -u 1000 www-data
+RUN chown -R www-data:www-data /var/www
 
 # Here, we are going to start apache at forground.
-CMD sudo apachectl -D FOREGROUND
+CMD apachectl -D FOREGROUND
