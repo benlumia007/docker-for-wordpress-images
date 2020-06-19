@@ -85,7 +85,7 @@ RUN phpenmod php-custom && \
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x /usr/local/bin/wp
 
-COPY nginx/app /app
+COPY nginx/7.1/app /app
 WORKDIR /app
 
 RUN usermod -u 1000 www-data
