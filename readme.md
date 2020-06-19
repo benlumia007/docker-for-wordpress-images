@@ -11,4 +11,4 @@
 * [php7.1](https://github.com/benlumia007/wp-4-docker-images/blob/master/nginx/7.1/Dockerfile), [php7.2](https://github.com/benlumia007/wp-4-docker-images/blob/master/nginx/7.2/Dockerfile), [php7.3](https://github.com/benlumia007/wp-4-docker-images/blob/master/nginx/7.3/Dockerfile), [php7.4](https://github.com/benlumia007/wp-4-docker-images/blob/master/nginx/7.4/Dockerfile)
 
 ## Ubuntu
-* `[bionic](https://github.com/benlumia007/wp-4-docker-images/blob/master/ubuntu/bionic/Dockerfile)`, `[focal](https://github.com/benlumia007/wp-4-docker-images/blob/master/ubuntu/focal/Dockerfile)`
+* [bionic](https://github.com/benlumia007/wp-4-docker-images/blob/master/ubuntu/bionic/Dockerfile), [focal](https://github.com/benlumia007/wp-4-docker-images/blob/master/ubuntu/focal/Dockerfile)
