@@ -9,9 +9,9 @@ LABEL maintainer="Benjamin Lu ( ben@getbenonit.com )"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Add a ppa repository  for git so that we can the latest version and let's grab the php versions as well
-RUN add-apt-repository ppa:git-core/ppa && \
-    add-apt-repository ppa:ondrej/php && \
-    -y
+RUN add-apt-repository ppa:git-core/ppa -y
+RUN add-apt-repository ppa:ondrej/php -y
+
 
 # Here, we will then do an apt-get update and upgrade some packages before we start the process of 
 # insalling actuall packages. This will help to install software that we need.
