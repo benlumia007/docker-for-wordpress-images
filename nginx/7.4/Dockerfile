@@ -53,13 +53,16 @@ RUN { \
     echo 'error_reporting=E_ALL'; \
     echo 'display_errors=On'; \
     echo 'display_startup_errors=On'; \
-    echo 'log_errors=On'; \
     echo 'error_log=/var/log/php/php_errors.log'; \
+    echo 'log_errors=On'; \
     echo 'log_errors_max_len=0'; \
+    echo 'max_execution_time=120'; \
+    echo 'max_input_vars=3000'; \
     echo 'memory_limit=256M'; \
     echo 'post_max_size=100M'; \
     echo 'upload_max_filesize=100M'; \
 } > /etc/php/7.4/mods-available/php-custom.ini
+
 
 # Here, we are going to enable opcache
 RUN { \
