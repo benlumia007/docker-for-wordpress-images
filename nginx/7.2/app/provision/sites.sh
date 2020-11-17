@@ -34,8 +34,14 @@ for domain in `get_sites`; do
         echo ${value:-$@}
     }
 
+    get_site_cms_type() {
+        local value=`cat ${config} | shyaml get-value sites.${domain}.custom.cms_type 2> /dev/null`
+        echo ${value:-$@}
+    }
+
     provision=`get_site_provision`
     repo=`get_site_repo`
+    type=`get_site_cms_type`
 
     if [[ "True" == ${provision} ]]; then
         dir="/srv/www/${domain}"
