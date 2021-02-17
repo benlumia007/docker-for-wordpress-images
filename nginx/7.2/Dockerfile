@@ -12,6 +12,7 @@ RUN apt-get update -y
 # Here, we are going to add some basic requirements
 RUN apt-get install --no-install-recommends \
     git \
+    gnupg \
     python-pip \
     python-setuptools \
     python-wheel \
@@ -48,6 +49,12 @@ RUN apt-get install --no-install-recommends \
 RUN wget https://getcomposer.org/download/2.0.4/composer.phar
 RUN chmod +x composer.phar
 RUN mv composer.phar /usr/local/bin/composer
+
+# Install NPM/Node
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
+RUN apt-get install --no-install-recommends \
+    nodejs 
+    -y
 
 # Here, we are going to install shyaml
 RUN pip install shyaml
