@@ -54,9 +54,9 @@ RUN mv composer.phar /usr/local/bin/composer
 # Install NPM/Node
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
 RUN apt-get install --no-install-recommends \
-    nodejs 
+    nodejs \
     -y
-
+    
 # Here, we are going to install shyaml
 RUN pip install shyaml
 
