@@ -44,6 +44,11 @@ RUN apt-get install --no-install-recommends \
     php7.2-zip \
     -y
 
+# Install composer
+RUN wget https://getcomposer.org/download/2.0.4/composer.phar
+RUN chmod +x composer.phar
+RUN mv composer.phar /usr/local/bin/composer
+
 # Here, we are going to install shyaml
 RUN pip install shyaml
 
