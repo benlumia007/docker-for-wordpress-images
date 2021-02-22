@@ -23,26 +23,27 @@ RUN apt-get install --no-install-recommends \
 RUN apt-get install --no-install-recommends \
     mysql-client \
     nginx \
-#    php-imagick \
-#    php-memcache \
-#    php-memcached \
-#    php-pear \
-#    php-ssh2 \
-#    php-xdebug \
-#    php8.0-bcmath \
+    php-imagick \
+    php-memcache \
+    php-memcached \
+    php-pear \
+    php-ssh2 \
+    php-xdebug \
+    php8.0-bcmath \
     php8.0-cli \
-#    php8.0-common \
-#    php8.0-curl \
-#    php8.0-dev \
-#    php8.0-fpm \
-#    php8.0-gd \
-#    php8.0-imap \
-#   php8.0-mbstring \
-#    php8.0-mysql \
-#    php8.0-soap \
-#    php8.0-sqlite3 \
-#    php8.0-xml \
-#    php8.0-zip \
+    php8.0-common \
+    php8.0-curl \
+    php8.0-dev \
+    php8.0-fpm \
+    php8.0-gd \
+    php8.0-imap \
+#    php8.0-json \
+    php8.0-mbstring \
+    php8.0-mysql \
+    php8.0-soap \
+    php8.0-sqlite3 \
+    php8.0-xml \
+    php8.0-zip \
     -y
 
 # Install composer
