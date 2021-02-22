@@ -29,21 +29,21 @@ RUN apt-get install --no-install-recommends \
     php-pear \
     php-ssh2 \
     php-xdebug \
-    php7.4-bcmath \
-    php7.4-cli \
-    php7.4-common \
-    php7.4-curl \
-    php7.4-dev \
-    php7.4-fpm \
-    php7.4-gd \
-    php7.4-imap \
-    php7.4-json \
-    php7.4-mbstring \
-    php7.4-mysql \
-    php7.4-soap \
-    php7.4-sqlite3 \
-    php7.4-xml \
-    php7.4-zip \
+    php8.0-bcmath \
+    php8.0-cli \
+    php8.0-common \
+    php8.0-curl \
+    php8.0-dev \
+    php8.0-fpm \
+    php8.0-gd \
+    php8.0-imap \
+    php8.0-json \
+    php8.0-mbstring \
+    php8.0-mysql \
+    php8.0-soap \
+    php8.0-sqlite3 \
+    php8.0-xml \
+    php8.0-zip \
     -y
 
 # Install composer
@@ -73,7 +73,7 @@ RUN { \
     echo 'memory_limit=512M'; \
     echo 'post_max_size=100M'; \
     echo 'upload_max_filesize=100M'; \
-} > /etc/php/7.4/mods-available/php-custom.ini
+} > /etc/php/8.0/mods-available/php-custom.ini
 
 
 # Here, we are going to enable opcache
@@ -83,10 +83,10 @@ RUN { \
 		echo 'opcache.max_accelerated_files=4000'; \
 		echo 'opcache.revalidate_freq=2'; \
 		echo 'opcache.fast_shutdown=1'; \
-} > /etc/php/7.4/mods-available/php-opcache.ini
+} > /etc/php/8.0/mods-available/php-opcache.ini
 
 COPY nginx/config/mailhog/mhsendmail /usr/local/bin/mhsendmail
-RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.4/mods-available/mailhog.ini
+RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/8.0/mods-available/mailhog.ini
 
 # Here, we will be enable php-custom.ini using phpenmod
 RUN phpenmod php-custom && \
@@ -100,10 +100,10 @@ RUN phpenmod php-custom && \
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x /usr/local/bin/wp
 
-COPY nginx/7.4/app /app
+COPY nginx/8.0/app /app
 WORKDIR /app
 
 RUN usermod -u 1000 www-data
 RUN chown -R www-data:www-data /var/www
 
-CMD service php7.4-fpm start && nginx -g "daemon off;"
+CMD service php8.0-fpm start && nginx -g "daemon off;"
