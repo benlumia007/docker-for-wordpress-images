@@ -37,7 +37,6 @@ RUN apt-get install --no-install-recommends \
     php8.0-fpm \
     php8.0-gd \
     php8.0-imap \
-    php8.0-json \
     php8.0-mbstring \
     php8.0-mysql \
     php8.0-soap \
