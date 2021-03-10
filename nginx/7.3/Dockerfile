@@ -101,13 +101,14 @@ RUN phpenmod php-custom && \
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x /usr/local/bin/wp
 
-# Create an alias for wp
-RUN alias wp='sudo -EH -u "www-data" "$@" wp'
-
 COPY nginx/7.3/app /app
 WORKDIR /app
 
 RUN usermod -u 1000 www-data
 RUN chown -R www-data:www-data /var/www
+
+# Create an alias for wp
+RUN echo "alias wp='sudo -EH -u "www-data" "$@" wp'" >> /root/.bashrc
+RUN /bin/bash -c "source /root/.bashrc"
 
 CMD service php7.3-fpm start && nginx -g "daemon off;"
