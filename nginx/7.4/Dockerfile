@@ -107,6 +107,7 @@ RUN usermod -u 1000 www-data
 RUN chown -R www-data:www-data /var/www
 
 # Create an alias for wp
-RUN alias wp='sudo -EH -u "www-data" "$@" wp'
+RUN echo "alias wp='sudo -EH -u "www-data" "$@" wp'" >> .bashrc
+RUN source .bashrc
 
 CMD service php7.4-fpm start && nginx -g "daemon off;"
