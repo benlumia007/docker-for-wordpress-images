@@ -17,6 +17,10 @@ RUN apt-get update -y && \
 RUN pip install shyaml
 
 COPY mysql/5.7/scripts/.my.cnf /root/.my.cnf
-COPY mysql/5.7/scripts/app /app
+RUN rm -rf /etc/mysql/mysql.cnf
+COPY mysql/5.7/scripts/mysql.cnf /etc/mysql/mysql.cnf
 
+RUN usermod -u 1000 mysql
+
+COPY mysql/5.7/scripts/app /app
 WORKDIR /app
