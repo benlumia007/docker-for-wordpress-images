@@ -14,9 +14,9 @@ RUN apt-get update -y
 RUN apt-get install --no-install-recommends \
     git \
     gnupg \
-    python-pip \
+    python3-pip \
     python-setuptools \
-    python-wheel \
+    python3-wheel \
     -y
 
 # Here, we are going to install Web Server ( NGINX )
@@ -58,7 +58,7 @@ RUN apt-get install --no-install-recommends \
     -y
     
 # Here, we are going to install shyaml
-RUN pip install shyaml
+RUN pip3 install shyaml
 
 # Here, we will be adding a custom file to enable features for php-custom.ini
 RUN { \
