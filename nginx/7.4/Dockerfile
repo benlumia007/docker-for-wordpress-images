@@ -15,7 +15,7 @@ RUN apt-get install --no-install-recommends \
     git \
     gnupg \
     python3-pip \
-    python-setuptools \
+    python3-setuptools \
     python3-wheel \
     -y
 
