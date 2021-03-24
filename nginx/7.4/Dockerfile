@@ -37,6 +37,7 @@ RUN apt-get install --no-install-recommends \
     php7.4-fpm \
     php7.4-gd \
     php7.4-imap \
+    php7.4-imagick \
     php7.4-json \
     php7.4-mbstring \
     php7.4-mysql \
