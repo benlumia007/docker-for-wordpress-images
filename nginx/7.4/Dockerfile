@@ -58,6 +58,9 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
 RUN apt-get install --no-install-recommends \
     nodejs \
     -y
+
+# Install Gatsby, We will use this for dashboard.test
+RUN npm install -g gatsby-cli
     
 # Here, we are going to install shyaml
 RUN pip install shyaml
