@@ -1,11 +1,10 @@
-FROM benlumia007/ubuntu:18.04
+FROM benlumia007/ubuntu:20.04
 
 ## Here, we are going to set the frontend to no interactive.
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Add a ppa repository  for git so that we can the latest version
 RUN add-apt-repository ppa:git-core/ppa -y
-RUN add-apt-repository ppa:ondrej/php -y
 RUN add-apt-repository ppa:nginx/stable -y
 
 ## Here we are going to run and update and upgrade packages.
@@ -15,9 +14,9 @@ RUN apt-get update -y
 RUN apt-get install --no-install-recommends \
     git \
     gnupg \
-    python-pip \
+    python3-pip \
     python-setuptools \
-    python-wheel \
+    python3-wheel \
     -y
 
 # Here, we are going to install Web Server ( NGINX )
@@ -54,16 +53,13 @@ RUN chmod +x composer.phar
 RUN mv composer.phar /usr/local/bin/composer
 
 # Install NPM/Node
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
 RUN apt-get install --no-install-recommends \
     nodejs \
     -y
-
-# Install Gatsby, We will use this for dashboard.test
-RUN npm install -g gatsby-cli
     
 # Here, we are going to install shyaml
-RUN pip install shyaml
+RUN pip3 install shyaml
 
 # Here, we will be adding a custom file to enable features for php-custom.ini
 RUN { \
