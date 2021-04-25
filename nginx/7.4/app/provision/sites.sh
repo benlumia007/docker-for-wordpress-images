@@ -50,7 +50,7 @@ for domain in `get_sites`; do
     }
 
     get_site_constants() {
-        local value=`cat ${config} | shyaml get-value sites.${domain}.custom.contstants 2> /dev/null`
+        local value=`cat ${config} | shyaml get-value sites.${domain}.custom.constants 2> /dev/null`
         echo ${value:-$@}
     }
 
@@ -59,7 +59,7 @@ for domain in `get_sites`; do
     type=`get_site_type`
     plugins=`get_site_plugins`
     themes=`get_site_themes`
-    contstants=`get_site_constants`
+    constants=`get_site_constants`
 
     if [[ "True" == ${provision} ]]; then
         dir="/srv/www/${domain}"
