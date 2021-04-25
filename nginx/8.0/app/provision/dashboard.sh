@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-repo="https://github.com/benlumia007/wp-4-docker-dashboard.git"
+repo="https://github.com/benlumia007/sturdy-docker-dashboard.git"
 dir="/srv/www/dashboard/public_html"
 
 # noroot

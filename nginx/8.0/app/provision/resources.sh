@@ -15,7 +15,7 @@ get_resources() {
     echo ${value:$@}
 }
 
-repo="https://github.com/benlumia007/wp-4-docker-resources.git"
+repo="https://github.com/benlumia007/sturdy-docker-resources.git"
 dir="provision/resources"
 
 resources=`get_resources`
