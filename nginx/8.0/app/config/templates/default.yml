@@ -10,7 +10,7 @@
 sites:
   sandbox:
     provision: true
-    repo: https://github.com/benlumia007/wp-4-docker-sites.git
+    repo: https://github.com/benlumia007/sturdy-docker-sites.git
     host:
       - sandbox.test
     custom:
