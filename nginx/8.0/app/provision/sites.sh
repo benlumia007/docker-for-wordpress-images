@@ -56,7 +56,10 @@ for domain in `get_sites`; do
 
     provision=`get_site_provision`
     repo=`get_site_repo`
-    type=`get_site_cms_type`
+    type=`get_site_type`
+    plugins=`get_site_plugins`
+    themes=`get_site_themes`
+    constants=`get_site_constants`
 
     if [[ "True" == ${provision} ]]; then
         dir="/srv/www/${domain}"
