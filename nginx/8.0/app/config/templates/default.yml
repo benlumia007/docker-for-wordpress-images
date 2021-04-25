@@ -13,6 +13,14 @@ sites:
     repo: https://github.com/benlumia007/wp-4-docker-sites.git
     host:
       - sandbox.test
+    custom:
+      type: WordPress
+      plugins:
+        - query-monitor
+      constants:
+        - DISALLOW_FILE_EDIT
+        - WP_DEBUG
+        - WP_DEBUG_DISPLAY
 
 resources:
   - phpmyadmin
