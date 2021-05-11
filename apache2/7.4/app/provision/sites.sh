@@ -18,9 +18,10 @@ get_sites() {
 
 for domain in `get_sites`; do
 
-    if [[ ! -d "/etc/nginx/conf.d/${domain}.conf" ]]; then
-      cp "/app/config/templates/nginx.conf" "/etc/nginx/conf.d/${domain}.conf"
-      sed -i -e "s/{{DOMAIN}}/${domain}/g" "/etc/nginx/conf.d/${domain}.conf"
+    if [[ ! -d "/etc/apache2/sites-available/${domain}.conf" ]]; then
+      cp "/app/config/templates/apache2.conf" "/etc/apache2/sites-available/${domain}.conf"
+      sed -i -e "s/{{DOMAIN}}/${domain}/g" "/etc/apache2/sites-available/${domain}.conf"
+      a2ensite "${domain}" > /dev/null 2>&1
     fi
 
 

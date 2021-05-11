@@ -11,9 +11,10 @@ noroot() {
     sudo -EH -u "www-data" "$@";
 }
 
-if [[ ! -d "/etc/nginx/conf.d/dashboard.conf" ]]; then
-  cp "/app/config/templates/nginx.conf" "/etc/nginx/conf.d/dashboard.conf"
-  sed -i -e "s/{{DOMAIN}}/dashboard/g" "/etc/nginx/conf.d/dashboard.conf"
+if [[ ! -d "/etc/apache2/sites-available/dashboard.conf" ]]; then
+  cp "/app/config/templates/apache2.conf" "/etc/apache2/sites-available/dashboard.conf"
+  sed -i -e "s/{{DOMAIN}}/dashboard/g" "/etc/apache2/sites-available/dashboard.conf"
+  a2ensite "dashboard" > /dev/null 2>&1
 fi
 
 if [[ false != "${repo}" ]]; then

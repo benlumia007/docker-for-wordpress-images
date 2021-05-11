@@ -5,7 +5,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Add a ppa repository  for git so that we can the latest version
 RUN add-apt-repository ppa:git-core/ppa -y
-RUN add-apt-repository ppa:nginx/stable -y
 
 ## Here we are going to run and update and upgrade packages.
 RUN apt-get update -y
@@ -21,8 +20,9 @@ RUN apt-get install --no-install-recommends \
 
 # Here, we are going to install Web Server ( NGINX )
 RUN apt-get install --no-install-recommends \
+    apache2 \
+    libapache2-mod-php7.4 \
     mysql-client \
-    nginx \
     php-imagick \
     php-memcache \
     php-memcached \
@@ -34,7 +34,6 @@ RUN apt-get install --no-install-recommends \
     php7.4-common \
     php7.4-curl \
     php7.4-dev \
-    php7.4-fpm \
     php7.4-gd \
     php7.4-imap \
     php7.4-imagick \
@@ -47,13 +46,15 @@ RUN apt-get install --no-install-recommends \
     php7.4-zip \
     -y
 
+RUN a2enmod headers ssl rewrite
+
 # Install composer
 RUN wget https://getcomposer.org/download/2.0.4/composer.phar
 RUN chmod +x composer.phar
 RUN mv composer.phar /usr/local/bin/composer
 
 # Install NPM/Node
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
 RUN apt-get install --no-install-recommends \
     nodejs \
     -y
@@ -86,7 +87,7 @@ RUN { \
 		echo 'opcache.fast_shutdown=1'; \
 } > /etc/php/7.4/mods-available/php-opcache.ini
 
-COPY nginx/config/mailhog/mhsendmail /usr/local/bin/mhsendmail
+COPY apache2/7.4/config/mailhog/mhsendmail /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.4/mods-available/mailhog.ini
 
 # Here, we will be enable php-custom.ini using phpenmod
@@ -101,7 +102,7 @@ RUN phpenmod php-custom && \
 RUN curl --silent -L -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x /usr/local/bin/wp
 
-COPY nginx/7.4/app /app
+COPY apache2/7.4/app /app
 WORKDIR /app
 
 RUN usermod -u 1000 www-data
@@ -111,4 +112,4 @@ RUN chown -R www-data:www-data /var/www
 RUN echo "alias wp='sudo -EH -u "www-data" "$@" wp'" >> /root/.bashrc
 RUN /bin/bash -c "source /root/.bashrc"
 
-CMD service php7.4-fpm start && nginx -g "daemon off;"
+CMD apachectl -D FOREGROUND
