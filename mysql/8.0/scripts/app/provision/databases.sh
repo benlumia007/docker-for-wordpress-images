@@ -11,7 +11,7 @@ get_sites() {
 
 for domain in `get_sites`; do
     get_site_cms_type() {
-        local value=`cat ${config} | shyaml get-value sites.${domain}.custom.cms_type 2> /dev/null`
+        local value=`cat ${config} | shyaml get-value sites.${domain}.custom.type 2> /dev/null`
         echo ${value:-$@}
     }
 
