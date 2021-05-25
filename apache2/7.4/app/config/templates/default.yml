@@ -8,6 +8,20 @@
 # If you need to add a new site, copy the example and uncomment the lines and enter the site name.
 # You wil then need to run when you use make.
 sites:
+  classicpress:
+    provision: true
+    repo: https://github.com/benlumia007/sturdy-docker-sites.git
+    host:
+      - classicpress.test
+    custom:
+      type: ClassicPress
+      plugins:
+        - query-monitor
+      constants:
+        - DISALLOW_FILE_EDIT
+        - WP_DEBUG
+        - WP_DEBUG_DISPLAY
+
   sandbox:
     provision: true
     repo: https://github.com/benlumia007/sturdy-docker-sites.git
@@ -16,6 +30,21 @@ sites:
     custom:
       type: WordPress
       plugins:
+        - query-monitor
+      constants:
+        - DISALLOW_FILE_EDIT
+        - WP_DEBUG
+        - WP_DEBUG_DISPLAY
+
+  wordpress:
+    provision: true
+    repo: https://github.com/benlumia007/sturdy-docker-sites.git
+    host:
+      - wordpress.test
+    custom:
+      type: WordPress
+      plugins:
+        - gutenberg
         - query-monitor
       constants:
         - DISALLOW_FILE_EDIT
