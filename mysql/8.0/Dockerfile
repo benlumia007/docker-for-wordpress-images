@@ -22,5 +22,5 @@ COPY mysql/8.0/scripts/mysql.cnf /etc/mysql/mysql.cnf
 
 RUN usermod -u 1000 mysql
 
-COPY mysql/8.0/scripts/app /app
+# COPY mysql/8.0/scripts/app /app
 WORKDIR /app
