@@ -88,6 +88,7 @@ RUN { \
 } > /etc/php/7.4/mods-available/php-opcache.ini
 
 COPY apache2/7.4/config/mailhog/mhsendmail /usr/local/bin/mhsendmail
+RUN chmod +x /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/local/bin/mhsendmail --smtp-addr mailhog:1025' > /etc/php/7.4/mods-available/mailhog.ini
 
 # Here, we will be enable php-custom.ini using phpenmod
